@@ -24,6 +24,8 @@ It's an **AI-powered, platform-independent search and command bar** that functio
 - **Platform Independence:** Provides a consistent, powerful tool across multiple operating systems, eliminating the need to learn different utilities for each platform.
 
 # Installation
+## Dependencies
+- `xdg-open`
 ## Install Libraries
 `npm i`
 

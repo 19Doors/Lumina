@@ -36,7 +36,9 @@ const SearchBox = () => {
       <div className="Dirs">
         {resultDir.map((item, index) => (
           <div key={index} className="Dir-item">
-	  {index} - {item}
+	  {index} - <button onClick={(e)=>{
+	    window.electronAPI.exec(item);
+	  }}>{item}</button>
           </div>
         ))}
       </div>
@@ -44,7 +46,9 @@ const SearchBox = () => {
       <div className="results">
         {result.map((item, index) => (
           <div key={index} className="result-item">
-	  {index} - {item}
+	  {index} - <button onClick={(e)=>{
+	    window.electronAPI.exec(item);
+	  }}>{item}</button>
           </div>
         ))}
       </div>
