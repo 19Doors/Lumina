@@ -26,6 +26,7 @@ It's an **AI-powered, platform-independent search and command bar** that functio
 # Installation
 ## Dependencies
 - `xdg-open`
+- Only Works on **Linux** & **MacOS**
 ## Install Libraries
 `npm i`
 
