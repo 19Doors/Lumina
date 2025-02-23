@@ -11,7 +11,7 @@ const SearchBox = () => {
           setResults(files[0]);
           setResultsDir(files[1]);
           // Dynamically adjust window height based on number of results:
-          const newHeight = Math.min(50 + files.length * 30, 500); // 30px per result, max 500px
+          const newHeight = Math.min(50 + (files[0].length + files[1].length) * 30, 500); // 30px per result, max 500px
           window.electronAPI.adjustHeight(newHeight);
         })
         .catch((err) => {
@@ -27,7 +27,7 @@ const SearchBox = () => {
       <input
         type="text"
         placeholder="Search..."
-	className="p-4 w-3xl focus:outline-none focus:border-transparent"
+	className="p-4 w-3xl focus:outline-none focus:border-transparent border-black"
 	value={query}
 	onChange={(e) => setQuery(e.target.value)}
       />
