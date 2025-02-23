@@ -27,8 +27,8 @@ const createWindow = () => {
     },
   })
 
-  // win.loadFile('dist/index.html')
-  win.loadURL('http://localhost:5173');
+  win.loadFile('dist/index.html')
+  // win.loadURL('http://localhost:5173');
 }
 
 // Handle search requests from the renderer

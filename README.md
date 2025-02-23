@@ -27,8 +27,5 @@ It's an **AI-powered, platform-independent search and command bar** that functio
 ## Install Libraries
 `npm i`
 
-## Run React Application 
-`npm run dev`
-
 ## Run Electron Application
 `npm run dev:electron`
