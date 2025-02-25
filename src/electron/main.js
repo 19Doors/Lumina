@@ -1,10 +1,32 @@
-import { app, BrowserWindow, ipcMain } from "electron"
+import { app, BrowserWindow, globalShortcut, ipcMain } from "electron"
 import searchFiles from "./lib.js";
 import path from 'path'
 import { exec } from "child_process";
 
 let win;
 let wid = 800;
+let height;
+switch (process.platform) {
+  case "win32":
+    console.log("win32");
+    height: 150;
+    break;
+
+  case "linux":
+    console.log("linux");
+    height: 50;
+    break;
+
+  case "darwin":
+    console.log("darwin");
+    height: 150;
+    break;
+
+  default:
+    console.log("default");
+    height: 200;
+    break;
+}
 
 function getPreloadPath() {
   return path.join(
@@ -13,11 +35,11 @@ function getPreloadPath() {
     '/src/electron/preload.cjs'
   )
 }
-console.log(getPreloadPath());
+
 const createWindow = () => {
   win = new BrowserWindow({
     width: wid,
-    height: 50,
+    height: height,
     frame: false,
     resizable: false,
     // transparent: true,
@@ -57,7 +79,17 @@ ipcMain.handle("getPath", (e) => {
 
 app.whenReady().then(() => {
   createWindow();
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  globalShortcut.register("CommandOrControl+I", () => {
+    console.log("Shortcut Registered");
+      if (win.isMinimized()) {
+        win.restore();
+        win.show();
+        win.focus();
+      } else {
+        win.minimize();
+      }
   });
+  // app.on("activate", () => {
+  //   if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  // });
 })
