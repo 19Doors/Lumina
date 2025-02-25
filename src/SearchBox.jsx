@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const SearchBox = () => {
   const [result, setResults] = useState([]);
@@ -6,12 +8,16 @@ const SearchBox = () => {
   const [query, setQuery] = useState("");
   useEffect(() => {
     if (query.length > 0) {
-      window.electronAPI.searchFiles(query)
+      window.electronAPI
+        .searchFiles(query)
         .then((files) => {
           setResults(files[0]);
           setResultsDir(files[1]);
           // Dynamically adjust window height based on number of results:
-          const newHeight = Math.min(50 + (files[0].length + files[1].length) * 30, 500); // 30px per result, max 500px
+          const newHeight = Math.min(
+            50 + (files[0].length + files[1].length) * 30,
+            500,
+          ); // 30px per result, max 500px
           window.electronAPI.adjustHeight(newHeight);
         })
         .catch((err) => {
@@ -23,35 +29,46 @@ const SearchBox = () => {
     }
   }, [query]);
   return (
-    <div className="">
+    <div>
       <input
         type="text"
         placeholder="Search..."
-	className="p-4 w-3xl focus:outline-none focus:border-transparent border-black"
-	value={query}
-	onChange={(e) => setQuery(e.target.value)}
+        className="p-4 w-3xl focus:outline-none focus:border-transparent border-black"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
       />
-      <div className="pl-4">
-      <h3 className="font-bold"> Directories </h3>
-      <div className="Dirs">
-        {resultDir.map((item, index) => (
-          <div key={index} className="Dir-item">
-	  {index} - <button onClick={(e)=>{
-	    window.electronAPI.exec(item);
-	  }}>{item}</button>
-          </div>
-        ))}
-      </div>
-      <h3 className="font-bold"> Files </h3>
-      <div className="results">
-        {result.map((item, index) => (
-          <div key={index} className="result-item">
-	  {index} - <button onClick={(e)=>{
-	    window.electronAPI.exec(item);
-	  }}>{item}</button>
-          </div>
-        ))}
-      </div>
+      <Separator />
+      <div className="pl-4 pt-4">
+        <h3 className="font-bold"> Directories </h3>
+        <div className="Dirs">
+          {resultDir.map((item, index) => (
+            <div key={index} className="Dir-item">
+              <Button
+		variant="ghost"
+                onClick={(e) => {
+                  window.electronAPI.exec(item);
+                }}
+              >
+                {item}
+              </Button>
+            </div>
+          ))}
+        </div>
+        <h3 className="font-bold"> Files </h3>
+        <div className="results">
+          {result.map((item, index) => (
+            <div key={index} className="result-item">
+              <Button
+		variant="ghost"
+                onClick={(e) => {
+                  window.electronAPI.exec(item);
+                }}
+              >
+                {item}
+              </Button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
