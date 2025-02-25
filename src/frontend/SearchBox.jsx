@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 function AI({answer}) {
+  window.electronAPI.adjustHeight(400);
   return (
     <div className="p-4">
       <h1 className="font-bold text-xl">AI</h1>
