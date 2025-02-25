@@ -33,7 +33,7 @@ const SearchBox = () => {
       <input
         type="text"
         placeholder="Search..."
-        className="p-4 w-3xl focus:outline-none focus:border-transparent border-black"
+        className="p-4 w-full focus:outline-none focus:border-transparent"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
