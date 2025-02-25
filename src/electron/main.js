@@ -18,7 +18,7 @@ const createWindow = () => {
   win = new BrowserWindow({
     width: wid,
     height: 50,
-    // frame: false,
+    frame: false,
     resizable: false,
     // transparent: true,
     alwaysOnTop: true,
