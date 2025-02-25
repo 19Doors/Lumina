@@ -2,12 +2,78 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
+function AI({answer}) {
+  return (
+    <div className="p-4">
+      <h1 className="font-bold text-xl">AI</h1>
+      <p>{answer}</p>
+    </div>
+  );
+}
+
+function SearchAllFiles({ resultDir, result }) {
+  return (
+    <>
+      <div className="pl-4 pt-4">
+        <h3 className="font-bold"> Directories </h3>
+        <div className="Dirs">
+          {resultDir.map((item, index) => (
+            <div key={index} className="Dir-item">
+              <Button
+                variant="ghost"
+                onClick={(e) => {
+                  window.electronAPI.exec(item);
+                }}
+              >
+                {item}
+              </Button>
+            </div>
+          ))}
+        </div>
+        <h3 className="font-bold"> Files </h3>
+        <div className="results">
+          {result.map((item, index) => (
+            <div key={index} className="result-item">
+              <Button
+                variant="ghost"
+                onClick={(e) => {
+                  window.electronAPI.exec(item);
+                }}
+              >
+                {item}
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
 const SearchBox = () => {
   const [result, setResults] = useState([]);
   const [resultDir, setResultsDir] = useState([]);
   const [query, setQuery] = useState("");
+  const [isAI, setIsAI] = useState(false);
+  const [AIAnswer, setAIAnswer] = useState("");
+  const handleKeyDown= (e) => {
+    if(e.key=="Enter"){
+      const tq = query.trim();
+      if(tq.length>0 && tq[0]=='/') {
+	console.log("AI Detected");
+	setIsAI(true);
+	window.electronAPI.getAIQuery(query).then((e)=>{setAIAnswer(e)}).catch((e)=>{console.error(e)});
+      }else {
+	setIsAI(false);
+      }
+    }
+  };
   useEffect(() => {
     if (query.length > 0) {
+      if (query[0] == "/") {
+      } else {
+        setIsAI(false);
+      }
       window.electronAPI
         .searchFiles(query)
         .then((files) => {
@@ -32,44 +98,15 @@ const SearchBox = () => {
     <div>
       <input
         type="text"
-        placeholder="Search..."
+        placeholder="Search... | Begin with / for AI"
         className="p-4 w-full focus:outline-none focus:border-transparent"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+	onKeyDown={handleKeyDown}
       />
       <Separator />
-      <div className="pl-4 pt-4">
-        <h3 className="font-bold"> Directories </h3>
-        <div className="Dirs">
-          {resultDir.map((item, index) => (
-            <div key={index} className="Dir-item">
-              <Button
-		variant="ghost"
-                onClick={(e) => {
-                  window.electronAPI.exec(item);
-                }}
-              >
-                {item}
-              </Button>
-            </div>
-          ))}
-        </div>
-        <h3 className="font-bold"> Files </h3>
-        <div className="results">
-          {result.map((item, index) => (
-            <div key={index} className="result-item">
-              <Button
-		variant="ghost"
-                onClick={(e) => {
-                  window.electronAPI.exec(item);
-                }}
-              >
-                {item}
-              </Button>
-            </div>
-          ))}
-        </div>
-      </div>
+      {!isAI && <SearchAllFiles resultDir={resultDir} result={result} />}
+      {isAI && <AI answer={AIAnswer}/>}
     </div>
   );
 };

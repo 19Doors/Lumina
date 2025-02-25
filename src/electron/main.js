@@ -1,5 +1,5 @@
 import { app, BrowserWindow, globalShortcut, ipcMain } from "electron"
-import searchFiles from "./lib.js";
+import {searchFiles, getAI} from "./lib.js";
 import path from 'path'
 import { exec } from "child_process";
 
@@ -74,6 +74,11 @@ ipcMain.on("exec", (e, x) => {
 
 ipcMain.handle("getPath", (e) => {
   return searchDir;
+})
+
+ipcMain.handle("getAIQuery", (e,query) => {
+  console.log("AII");
+  return getAI(query);
 })
 
 

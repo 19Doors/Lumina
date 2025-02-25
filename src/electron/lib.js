@@ -1,4 +1,9 @@
 import fg from 'fast-glob';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const modelName="models/gemini-1.5-flash-8b";
+const genAI = new GoogleGenerativeAI("AIzaSyDR_EVwevdInqeRYjpYodyEYqXYJc0dmw0");
+const model = genAI.getGenerativeModel({ model: modelName});
 
 async function searchFiles(baseDir, query, depth = 5) {
   const pattern = `**/*${query}*`;
@@ -7,4 +12,11 @@ async function searchFiles(baseDir, query, depth = 5) {
   return [entriesFiles, entriesDir]
 }
 
-export default searchFiles;
+async function getAI(query) {
+  console.log(query);
+  const result = await model.generateContent(query);
+  return result.response.text();
+  return "OK";
+}
+
+export {searchFiles, getAI};

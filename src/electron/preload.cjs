@@ -5,4 +5,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
   adjustHeight: (height) => ipcRenderer.send("adjust-height", height),
   getPath: () => ipcRenderer.invoke("getPath"),
   exec: (x) => ipcRenderer.send("exec",x),
+  getAIQuery: (x) => ipcRenderer.invoke("getAIQuery", x),
 });
