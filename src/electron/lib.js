@@ -2,6 +2,8 @@ import fg from 'fast-glob';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const modelName="models/gemini-1.5-flash-8b";
+// const modelName="gemini-2.0-flash";
+
 const genAI = new GoogleGenerativeAI("AIzaSyDR_EVwevdInqeRYjpYodyEYqXYJc0dmw0");
 const model = genAI.getGenerativeModel({ model: modelName});
 
