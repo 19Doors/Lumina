@@ -1,13 +1,30 @@
 import { useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import Markdown from "react-markdown";
 
-function AI({answer}) {
+function AILoading({ answer }) {
   window.electronAPI.adjustHeight(400);
   return (
     <div className="p-4">
-      <h1 className="font-bold text-xl">AI</h1>
-      <p>{answer}</p>
+      <Skeleton className="h-12 w-full" />
+      <Separator className="mt-2 mb-2" />
+      <Skeleton className="h-12 w-full mb-2" />
+      <Skeleton className="h-12 w-full mb-2" />
+      <Skeleton className="h-12 w-full mb-2" />
+    </div>
+  );
+}
+function AI({ answer }) {
+  window.electronAPI.adjustHeight(400);
+  return (
+    <div className="p-4">
+      <Markdown className="text-2xl">{answer[0]}</Markdown>
+      <Separator className="mt-2 mb-2" />
+      <Markdown>{answer[1]}</Markdown>
     </div>
   );
 }
@@ -57,18 +74,28 @@ const SearchBox = () => {
   const [query, setQuery] = useState("");
   const [isAI, setIsAI] = useState(false);
   const [AIAnswer, setAIAnswer] = useState("");
-  const handleKeyDown= (e) => {
-    if(e.key=="Enter"){
+  const [isLoading, setIsLoading] = useState(false);
+  const handleKeyDown = async (e) => {
+    if (e.key == "Enter") {
       const tq = query.trim();
-      if(tq.length>0 && tq[0]=='/') {
-	console.log("AI Detected");
-	setIsAI(true);
-	window.electronAPI.getAIQuery(query).then((e)=>{setAIAnswer(e)}).catch((e)=>{console.error(e)});
-      }else {
-	setIsAI(false);
+      if (tq.length > 0 && tq[0] == "/") {
+        console.log("AI Detected");
+        setIsAI(true);
+        setIsLoading(true);
+        try {
+          const response = await window.electronAPI.getAIQuery(query);
+          setAIAnswer(response);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsAI(false);
       }
     }
   };
+  useEffect(() => {}, [isLoading]);
   useEffect(() => {
     if (query.length > 0) {
       if (query[0] == "/") {
@@ -97,17 +124,23 @@ const SearchBox = () => {
   }, [query]);
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Search... | Begin with / for AI"
-        className="p-4 w-full focus:outline-none focus:border-transparent"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-	onKeyDown={handleKeyDown}
-      />
+      <div className="flex">
+        <input
+          type="text"
+          placeholder="Search... | Begin with / for AI"
+          className="basis-3/4 p-4 w-full focus:outline-none focus:border-transparent"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <div className="basis-1/4 grid w-full max-w-sm items-center gap-1.5">
+          <Input id="pdfFile" type="file" accept="application/pdf" />
+        </div>
+      </div>
       <Separator />
       {!isAI && <SearchAllFiles resultDir={resultDir} result={result} />}
-      {isAI && <AI answer={AIAnswer}/>}
+      {isAI && isLoading && <AILoading />}
+      {isAI && !isLoading && <AI answer={AIAnswer} />}
     </div>
   );
 };

@@ -41,7 +41,7 @@ const createWindow = () => {
   win = new BrowserWindow({
     width: wid,
     height: height,
-    // frame: false,
+    frame: false,
     // resizable: false,
     // transparent: true,
     alwaysOnTop: true,
@@ -77,7 +77,7 @@ ipcMain.handle("getPath", (e) => {
   return searchDir;
 })
 
-ipcMain.handle("getAIQuery", (e,query) => {
+ipcMain.handle("getAIQuery", async (e,query) => {
   // const nWin = new BrowserWindow({width:800, height:800, x:0, y:0});
   // nWin.loadURL('https://github.com')
   // nWin.once('ready-to-show', () => {

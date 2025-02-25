@@ -14,9 +14,11 @@ async function searchFiles(baseDir, query, depth = 5) {
 
 async function getAI(query) {
   console.log(query);
+  const heading = await model.generateContent("Write the heading for the query in bold: "+query);
+  const headingR = heading.response.text();
   const result = await model.generateContent(query);
-  return result.response.text();
-  return "OK";
+  const rr = result.response.text();
+  return [headingR, rr];
 }
 
 export {searchFiles, getAI};
