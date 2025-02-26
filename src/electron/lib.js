@@ -16,7 +16,12 @@ async function searchFiles(baseDir, query, depth = 5) {
 
 async function getAI(query) {
   console.log(query);
+  let pdf = query[1];
+  query=query[0];
   const heading = await model.generateContent("Write the heading for the query in bold: "+query);
+  if(pdf.length>0) {
+    query="Read this "+pdf+" and answer, "+query;
+  }
   const headingR = heading.response.text();
   const result = await model.generateContent(query);
   const rr = result.response.text();

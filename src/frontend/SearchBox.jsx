@@ -75,6 +75,28 @@ const SearchBox = () => {
   const [isAI, setIsAI] = useState(false);
   const [AIAnswer, setAIAnswer] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [pdfParsedText, setPdfParsedText] = useState("");
+  const readFileAsArrayBuffer = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (err) => reject(err);
+      reader.readAsArrayBuffer(file);
+    });
+  };
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const arrayBuffer = await readFileAsArrayBuffer(file);
+      const pdfParsedTextt = await window.electronAPI.parsePDF(arrayBuffer);
+      setPdfParsedText(pdfParsedTextt);
+    } catch (err) {
+      console.error("Error while parsing: " + err);
+      console.error("Failed to parse.");
+    }
+  };
   const handleKeyDown = async (e) => {
     if (e.key == "Enter") {
       const tq = query.trim();
@@ -83,7 +105,9 @@ const SearchBox = () => {
         setIsAI(true);
         setIsLoading(true);
         try {
-          const response = await window.electronAPI.getAIQuery(query);
+          const response = await window.electronAPI.getAIQuery(
+	    [query, pdfParsedText]
+          );
           setAIAnswer(response);
         } catch (e) {
           console.error(e);
@@ -134,7 +158,11 @@ const SearchBox = () => {
           onKeyDown={handleKeyDown}
         />
         <div className="basis-1/4 grid w-full max-w-sm items-center gap-1.5">
-          <Input id="pdfFile" type="file" accept="application/pdf" />
+          <Input
+            type="file"
+            accept="application/pdf"
+            onChange={handleFileChange}
+          />
         </div>
       </div>
       <Separator />

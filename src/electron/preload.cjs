@@ -6,4 +6,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getPath: () => ipcRenderer.invoke("getPath"),
   exec: (x) => ipcRenderer.send("exec",x),
   getAIQuery: (x) => ipcRenderer.invoke("getAIQuery", x),
+  parsePDF: (x) => ipcRenderer.invoke("parsePDF", x),
 });

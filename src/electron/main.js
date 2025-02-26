@@ -3,6 +3,7 @@ import fs from 'fs';
 import {searchFiles, getAI} from "./lib.js";
 import path from 'path'
 import { exec } from "child_process";
+import * as pdfjsLib from 'pdfjs-dist';
 
 let win;
 let wid = 800;
@@ -78,38 +79,48 @@ ipcMain.handle("getPath", (e) => {
 })
 
 ipcMain.handle("getAIQuery", async (e,query) => {
-  // const nWin = new BrowserWindow({width:800, height:800, x:0, y:0});
-  // nWin.loadURL('https://github.com')
-  // nWin.once('ready-to-show', () => {
-  //   nWin.show()
-  // })
   return getAI(query);
 })
+function bufferToArrayBuffer(buffer) {
+  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+}
+ipcMain.handle("parsePDF", async (e,file) => {
+  const pdf = await pdfjsLib.getDocument({ data: file}).promise;
+  let extractedText = '';
+
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+    const page = await pdf.getPage(pageNum);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items.map(item => item.str).join(' ');
+    extractedText += pageText + '\n\n';
+  }
+  return extractedText;
+});
 
 // async function captureScreenWithoutAppWindow() {
 //   // Get a reference to the current window.
 //   const mainWindow = win;
-//   
+//
 //   // Hide the window so it's not captured
 //   mainWindow.hide();
-//   
+//
 //   // Wait a bit for the window to actually be hidden (adjust delay as needed)
 //   await new Promise(resolve => setTimeout(resolve, 300));
-//   
+//
 //   // Capture screen sources. We'll capture all screens and pick one.
 //   const sources = await desktopCapturer.getSources({
 //     types: ['screen'],
 //     thumbnailSize: { width: 1920, height: 1080 } // adjust size as needed
 //   });
-//   
+//
 //   // For simplicity, use the first screen source (you might iterate if you have multiple monitors)
 //   const primarySource = sources[0];
 //   const screenshotBuffer = primarySource.thumbnail.toPNG();
-//   
+//
 //   // Define the path where you want to save the screenshot.
 //   // This example saves it in the user's home directory.
 //   const filePath = path.join(process.env.HOME || process.env.USERPROFILE, 'screenshot.png');
-//   
+//
 //   // Write the PNG buffer to a file.
 //   fs.writeFile(filePath, screenshotBuffer, (err) => {
 //     if (err) {
@@ -118,10 +129,10 @@ ipcMain.handle("getAIQuery", async (e,query) => {
 //       console.log("Screenshot saved successfully at:", filePath);
 //     }
 //   });
-//   
+//
 //   // Show the window again.
 //   mainWindow.show();
-//   
+//
 //   return filePath;
 // }
 
