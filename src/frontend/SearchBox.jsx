@@ -148,16 +148,16 @@ const SearchBox = () => {
   }, [query]);
   return (
     <div>
-      <div className="flex">
+      <div className="flex pl-4 pr-4 pt-4 pb-2">
         <input
           type="text"
-          placeholder="Search... | Begin with / for AI"
-          className="basis-3/4 p-4 w-full focus:outline-none focus:border-transparent"
+          placeholder="Search... | Begin with / for AI, upload pdf for AI to handle -> "
+          className="basis-2/3 w-full focus:outline-none focus:border-transparent"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <div className="basis-1/4 grid w-full max-w-sm items-center gap-1.5">
+        <div className="basis-1/3 grid w-full max-w-sm items-center gap-1.5">
           <Input
             type="file"
             accept="application/pdf"
