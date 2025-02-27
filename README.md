@@ -7,6 +7,7 @@ It's an **AI-powered, platform-independent search and command bar** that functio
 - **App & File Launcher:** Quickly opens applications or files based on your input.
 - **Advanced Document Handling:** Can summarize PDFs or extract key information from documents.
 - **Context-Awareness:** Optionally, it can analyze what's on your screen (using OCR) to provide contextually relevant suggestions or actions.
+- **Multiple Integrations:** Optionally, it can integrate with your gmail and other applications to access their data for AI purpose.
 
 ## 1.2 Why Create It?
 
