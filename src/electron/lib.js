@@ -15,13 +15,14 @@ async function searchFiles(baseDir, query, depth = 5) {
 }
 
 async function getAI(query) {
-  console.log(query);
+  // console.log(query);
   let pdf = query[1];
   let emails = query[2];
   query=query[0];
-  const heading = await model.generateContent("Write the heading for the query in bold: "+query);
+  const heading = await model.generateContent("Write the heading for this query in bold, do not say anything else: "+query);
+  query="You are an AI Agent, respond the user's query as they say and expect: \n"+query;
   if(emails && emails.length>0) {
-    query="Emails: "+emails+" \n";
+    query="Emails: "+emails+" \n"+query;
   }
   if(pdf.length>0) {
     query="Read this "+pdf+" and answer, "+query;

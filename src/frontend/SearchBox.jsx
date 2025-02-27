@@ -112,7 +112,6 @@ const SearchBox = () => {
 	  switch(parsedCommand.type) {
 	    case "email":
 	      let emails = await window.electronAPI.getEmails("ok");
-	      console.log("EMAILS SET DONE "+emails);
 	      emailText=emails;
 	      break;
 

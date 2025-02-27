@@ -76,16 +76,6 @@ function decodeBase64(data) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-async function getEmail(auth) {
-  const gmail = google.gmail({version: 'v1', auth});
-  const res = await gmail.users.messages.list({
-    userId: 'me',
-    maxResults: 10,
-  });
-  const messages = res.data.messages || [];
-  console.log('Messages:', messages);
-}
-
 function extractBody(parts) {
   let body = "";
   for(let part of parts) {
@@ -103,7 +93,7 @@ async function getEmails(auth) {
     const gmail = google.gmail({version: 'v1', auth});
     const res = await gmail.users.messages.list({
       userId: 'me',
-      maxResults: 5,
+      maxResults: 15,
     });
     const msgs = res.data.messages || [];
     if(msgs.length==0) {
@@ -115,15 +105,32 @@ async function getEmails(auth) {
     for(const msg of msgs){
       const m = await gmail.users.messages.get({id: msg.id, userId: "me", format:"full"});
       // console.log(m.data.payload.parts[0]);
+      
       const header = m.data.payload.headers;
       const subject = header.find(h => h.name.toLowerCase() === 'subject')?.value || 'No Subject';
+      const from = header.find(h => h.name.toLowerCase() === 'from')?.value || 'Unknown Sender';
+      const to = header.find(h => h.name.toLowerCase() === 'to')?.value || 'No Recipients';
+      const date = header.find(h => h.name.toLowerCase() === 'date')?.value || 'No Date';
+      // If labels are available in the message, include them. They might come from a separate field.
+	//
+      const labels = m.data.labelIds ? m.data.labelIds.join(', ') : '';
       let body="NO body here";
       if(m.data.payload && m.data.payload.parts)
        body = extractBody(m.data.payload.parts);
-      console.log(body);
-      emails+="Email "+i+":\n";
-      emails+="Subject: "+subject+" \n";
-      emails+="Body: "+body+" \n";
+      // console.log(body);
+      emails = `
+	Email No: ${i++}
+	From: ${from}
+	To: ${to}
+	Date: ${date}
+	Labels: ${labels}
+	Subject: ${subject}
+	Body: ${body}
+	  `+emails.trim();
+      // emails+="Email "+i+":\n";
+      // emails+="From"+from+":\n";
+      // emails+="Subject: "+subject+" \n";
+      // emails+="Body: "+body+" \n";
     }
   return emails;
     console.log("FUNCTION "+emails);
