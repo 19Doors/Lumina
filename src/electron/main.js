@@ -26,7 +26,7 @@ switch (process.platform) {
 
   default:
     console.log("default");
-    height: 200;
+    height: 100;
     break;
 }
 
