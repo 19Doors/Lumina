@@ -76,6 +76,7 @@ const SearchBox = () => {
   const [AIAnswer, setAIAnswer] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [pdfParsedText, setPdfParsedText] = useState("");
+
   const readFileAsArrayBuffer = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -105,8 +106,22 @@ const SearchBox = () => {
         setIsAI(true);
         setIsLoading(true);
         try {
+	  let emailText="";
+	  const parsedCommand = await window.electronAPI.getCommand(query);
+	  console.log("TYPE: "+parsedCommand.type);
+	  switch(parsedCommand.type) {
+	    case "email":
+	      let emails = await window.electronAPI.getEmails("ok");
+	      emailText=emails;
+	      break;
+
+	    default:
+	      console.log("NO");
+	      break;
+	  }
+	  console.log("PARSED");
           const response = await window.electronAPI.getAIQuery(
-	    [query, pdfParsedText]
+	    [query, pdfParsedText, emailText]
           );
           setAIAnswer(response);
         } catch (e) {

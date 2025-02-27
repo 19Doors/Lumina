@@ -7,4 +7,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
   exec: (x) => ipcRenderer.send("exec",x),
   getAIQuery: (x) => ipcRenderer.invoke("getAIQuery", x),
   parsePDF: (x) => ipcRenderer.invoke("parsePDF", x),
+  getCommand: (x) => ipcRenderer.invoke("getCommand", x),
+  getEmails: async (x) => await ipcRenderer.invoke("getEmails", x),
 });

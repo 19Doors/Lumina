@@ -15,10 +15,15 @@ async function searchFiles(baseDir, query, depth = 5) {
 }
 
 async function getAI(query) {
-  console.log(query);
+  // console.log(query);
   let pdf = query[1];
+  let emails = query[2];
   query=query[0];
-  const heading = await model.generateContent("Write the heading for the query in bold: "+query);
+  const heading = await model.generateContent("Write the heading for this query in bold, do not say anything else: "+query);
+  query="You are an AI Agent, respond the user's query as they say and expect: \n"+query;
+  if(emails && emails.length>0) {
+    query="Emails: "+emails+" \n"+query;
+  }
   if(pdf.length>0) {
     query="Read this "+pdf+" and answer, "+query;
   }
@@ -28,4 +33,46 @@ async function getAI(query) {
   return [headingR, rr];
 }
 
-export {searchFiles, getAI};
+async function commandParse(query) {
+  const prompt = `
+You are a command parser. Given a user's query, return a JSON object with keys:
+  - "type": The command types = ["email", "calendar", "search", "launch"]
+  - "params": An object with parameters relevant to the command.
+
+Examples:
+If the user says "In my emails, what is going on?", return:
+{
+  "type": "email",
+  "params": {
+    "date": "today"
+  }
+}
+
+If the user says "Open Spotify", return:
+{
+  "type": "launch",
+  "params": {
+    "app": "Spotify"
+  }
+}
+
+No Markdowns
+
+Now, parse the following user query and return only the JSON object:
+"${query}"
+`;
+  const result = await model.generateContent(prompt);
+  let rr = result.response.text();
+  rr= rr.replace(/```json\s*|```/g, '').trim();
+
+  try {
+    const parsedCommand = JSON.parse(rr);
+    console.log(parsedCommand);
+    return parsedCommand;
+  } catch (error) {
+    console.error("Failed to parse JSON:", error);
+    return ;
+  }
+}
+
+export {searchFiles, getAI, commandParse};
