@@ -27,7 +27,7 @@ It's an **AI-powered, platform-independent search and command bar** that functio
 ## Dependencies
 - `xdg-open`
 ## Install Libraries
-`npm i`
+`npm i --force`
 
 ## Run Electron Application
 `npm run dev:electron`
