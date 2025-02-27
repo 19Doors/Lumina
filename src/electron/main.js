@@ -1,9 +1,10 @@
 import { desktopCapturer, app, BrowserWindow, globalShortcut, ipcMain } from "electron"
 import fs from 'fs';
-import {searchFiles, getAI} from "./lib.js";
+import {searchFiles, getAI, commandParse} from "./lib.js";
 import path from 'path'
 import { exec } from "child_process";
 import * as pdfjsLib from 'pdfjs-dist';
+import { getEmailText } from "./email.js";
 
 let win;
 let wid = 800;
@@ -29,7 +30,6 @@ switch (process.platform) {
     height: 200;
     break;
 }
-
 function getPreloadPath() {
   return path.join(
     app.getAppPath(),
@@ -96,6 +96,14 @@ ipcMain.handle("parsePDF", async (e,file) => {
   }
   return extractedText;
 });
+ipcMain.handle("getCommand", async (e,query) => {
+  const result = await commandParse(query);
+  return result;
+})
+ipcMain.handle("getEmails", async (e,x) => {
+  const result = await getEmailText();
+  return result;
+})
 
 // async function captureScreenWithoutAppWindow() {
 //   // Get a reference to the current window.
